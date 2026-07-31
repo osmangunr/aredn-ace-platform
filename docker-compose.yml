@@ -1,0 +1,61 @@
+services:
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: ace-postgres
+
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: ace
+      POSTGRES_USER: ace
+      POSTGRES_PASSWORD: ace123
+
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+
+    ports:
+      - "5432:5432"
+
+    healthcheck:
+      test: ["CMD-SHELL","pg_isready -U ace"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+
+    image: redis:7-alpine
+
+    container_name: ace-redis
+
+    restart: unless-stopped
+
+    ports:
+      - "6379:6379"
+
+    healthcheck:
+      test: ["CMD","redis-cli","ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+
+    build:
+      context: ./apps/api
+
+    container_name: ace-api
+
+    restart: unless-stopped
+
+    ports:
+      - "3000:3000"
+
+    depends_on:
+
+      postgres:
+        condition: service_healthy
+
+      redis:
+        condition: service_healthy

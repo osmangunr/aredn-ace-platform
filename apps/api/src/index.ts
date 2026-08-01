@@ -1,33 +1,26 @@
 import Fastify from "fastify";
 import nodeRoutes from "./routes/nodes";
+import userRoutes from "./routes/users";
+import authRoutes from "./routes/auth";
 
-const app = Fastify({
-  logger: true,
+const app=Fastify({
+logger:true
 });
 
 app.register(nodeRoutes);
+app.register(userRoutes);
+app.register(authRoutes);
 
-app.get("/health", async () => {
-  return {
-    status: "ok",
-    service: "ACE API",
-    version: "0.1.0-alpha",
-    timestamp: new Date().toISOString(),
-  };
+app.get("/health",async()=>{
+return{
+status:"ok",
+service:"ACE API",
+version:"0.1.0-alpha",
+timestamp:new Date().toISOString()
+};
 });
 
-const start = async () => {
-  try {
-    await app.listen({
-      host: "0.0.0.0",
-      port: 3000,
-    });
-
-    console.log("✅ ACE API started on http://0.0.0.0:3000");
-  } catch (err) {
-    app.log.error(err);
-    process.exit(1);
-  }
-};
-
-start();
+app.listen({
+host:"0.0.0.0",
+port:3000
+});

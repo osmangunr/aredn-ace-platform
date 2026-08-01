@@ -3,6 +3,7 @@ import nodeRoutes from "./routes/nodes";
 import userRoutes from "./routes/users";
 import deviceRoutes from "./routes/devices";
 import telemetryRoutes from "./routes/telemetry";
+import apiKeyRoutes from "./routes/apikeys";
 import authRoutes from "./routes/auth";
 
 const app=Fastify({
@@ -13,6 +14,7 @@ app.register(nodeRoutes);
 app.register(userRoutes);
 app.register(deviceRoutes);
 app.register(telemetryRoutes);
+app.register(apiKeyRoutes);
 app.register(authRoutes);
 
 app.get("/health",async()=>{

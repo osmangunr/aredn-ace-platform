@@ -26,6 +26,7 @@ model User {
   role      Role     @default(VIEWER)
 
   nodes     Node[]
+  apiKeys   ApiKey[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -84,4 +85,16 @@ model Telemetry {
   device      Device @relation(fields: [deviceId], references: [id])
 
   createdAt   DateTime @default(now())
+}
+
+
+model ApiKey {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  name      String
+  role      Role     @default(GATEWAY)
+  enabled   Boolean  @default(true)
+  userId    String?
+  user      User?    @relation(fields:[userId], references:[id])
+  createdAt DateTime @default(now())
 }

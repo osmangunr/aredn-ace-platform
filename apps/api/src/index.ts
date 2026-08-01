@@ -4,6 +4,7 @@ import userRoutes from "./routes/users";
 import deviceRoutes from "./routes/devices";
 import telemetryRoutes from "./routes/telemetry";
 import apiKeyRoutes from "./routes/apikeys";
+import gatewayRoutes from "./routes/gateway";
 import authRoutes from "./routes/auth";
 
 const app=Fastify({
@@ -15,6 +16,7 @@ app.register(userRoutes);
 app.register(deviceRoutes);
 app.register(telemetryRoutes);
 app.register(apiKeyRoutes);
+app.register(gatewayRoutes);
 app.register(authRoutes);
 
 app.get("/health",async()=>{

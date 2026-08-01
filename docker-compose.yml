@@ -46,6 +46,8 @@ services:
       context: ./apps/api
 
     container_name: ace-api
+    env_file:
+      - ./apps/api/.env
 
     restart: unless-stopped
 

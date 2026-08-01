@@ -1,59 +1,87 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  SUPERADMIN
+  ADMIN
+  OPERATOR
+  VIEWER
+  GATEWAY
+  API
 }
 
 model User {
   id        String   @id @default(uuid())
   username  String   @unique
+  password  String
   email     String?  @unique
-  role      String   @default("user")
+  enabled   Boolean  @default(true)
+  role      Role     @default(VIEWER)
+
+  nodes     Node[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  nodes     Node[]
 }
 
 model Node {
-  id        String    @id @default(uuid())
+  id        String   @id @default(uuid())
   name      String
-  callsign  String?   @unique
-  type      String    @default("UNKNOWN")
+  callsign  String?  @unique
+  type      String   @default("UNKNOWN")
+
   ip        String?
   mac       String?
-  status    String    @default("offline")
+  status    String   @default("offline")
+
   ownerId   String?
-  lastSeen  DateTime?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  owner     User?    @relation(fields: [ownerId], references: [id])
+
   devices   Device[]
-  owner     User?     @relation(fields: [ownerId], references: [id])
+  lastSeen  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Device {
-  id        String      @id @default(uuid())
+  id        String   @id @default(uuid())
+
   model     String
   firmware  String?
+
   battery   Float?
   voltage   Float?
+
   nodeId    String
-  createdAt DateTime    @default(now())
-  node      Node        @relation(fields: [nodeId], references: [id])
+  node      Node @relation(fields: [nodeId], references: [id])
+
   telemetry Telemetry[]
+
+  createdAt DateTime @default(now())
 }
 
 model Telemetry {
   id          String   @id @default(uuid())
+
   rssi        Int?
   snr         Float?
+
   latitude    Float?
   longitude   Float?
+
   temperature Float?
   humidity    Float?
+
   deviceId    String
+  device      Device @relation(fields: [deviceId], references: [id])
+
   createdAt   DateTime @default(now())
-  device      Device   @relation(fields: [deviceId], references: [id])
 }

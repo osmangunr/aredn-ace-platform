@@ -1,8 +1,11 @@
 import Fastify from "fastify";
+import nodeRoutes from "./routes/nodes";
 
 const app = Fastify({
   logger: true,
 });
+
+app.register(nodeRoutes);
 
 app.get("/health", async () => {
   return {

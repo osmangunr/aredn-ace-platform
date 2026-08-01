@@ -1,6 +1,7 @@
 import Fastify from "fastify";
 import nodeRoutes from "./routes/nodes";
 import userRoutes from "./routes/users";
+import deviceRoutes from "./routes/devices";
 import authRoutes from "./routes/auth";
 
 const app=Fastify({
@@ -9,6 +10,7 @@ logger:true
 
 app.register(nodeRoutes);
 app.register(userRoutes);
+app.register(deviceRoutes);
 app.register(authRoutes);
 
 app.get("/health",async()=>{

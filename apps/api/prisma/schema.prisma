@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  email     String?  @unique
+  role      String   @default("user")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  nodes     Node[]
+}
+
+model Node {
+  id        String    @id @default(uuid())
+  name      String
+  callsign  String?   @unique
+  type      String    @default("UNKNOWN")
+  ip        String?
+  mac       String?
+  status    String    @default("offline")
+  ownerId   String?
+  lastSeen  DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  devices   Device[]
+  owner     User?     @relation(fields: [ownerId], references: [id])
+}
+
+model Device {
+  id        String      @id @default(uuid())
+  model     String
+  firmware  String?
+  battery   Float?
+  voltage   Float?
+  nodeId    String
+  createdAt DateTime    @default(now())
+  node      Node        @relation(fields: [nodeId], references: [id])
+  telemetry Telemetry[]
+}
+
+model Telemetry {
+  id          String   @id @default(uuid())
+  rssi        Int?
+  snr         Float?
+  latitude    Float?
+  longitude   Float?
+  temperature Float?
+  humidity    Float?
+  deviceId    String
+  createdAt   DateTime @default(now())
+  device      Device   @relation(fields: [deviceId], references: [id])
+}
